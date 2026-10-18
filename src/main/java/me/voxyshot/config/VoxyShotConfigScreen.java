@@ -1,5 +1,6 @@
 package me.voxyshot.config;
 
+import me.voxyshot.compat.VersionCompat;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -119,7 +120,7 @@ public class VoxyShotConfigScreen extends Screen {
     public void onClose() {
         this.config.save();
         if (this.minecraft != null) {
-            this.minecraft.setScreen(this.parent);
+            VersionCompat.setScreen(this.minecraft, this.parent);
         }
     }
 }

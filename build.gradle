@@ -1,13 +1,25 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
-    id 'maven-publish'
 }
 
-version = project.mod_version
+version = "${project.mod_version}+${project.minecraft_version}"
 group = project.maven_group
 
 base {
     archivesName = project.archives_base_name
+}
+
+// Version-specific sources (API differences between Minecraft versions live in src/mc/<minecraft_version>/java)
+def versionSourceDir = file("src/mc/${project.minecraft_version}/java")
+if (!versionSourceDir.isDirectory()) {
+    throw new GradleException("Unsupported minecraft_version '${project.minecraft_version}': ${versionSourceDir} does not exist")
+}
+sourceSets {
+    main {
+        java {
+            srcDir versionSourceDir
+        }
+    }
 }
 
 repositories {
@@ -53,7 +65,6 @@ java {
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
-    withSourcesJar()
 }
 
 jar {
@@ -64,8 +75,10 @@ jar {
 
 processResources {
     inputs.property "version", project.version
+    inputs.property "minecraft_dependency", project.minecraft_dependency
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": project.version,
+                "minecraft_dependency": project.minecraft_dependency
     }
 }

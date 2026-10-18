@@ -2,83 +2,35 @@ package me.voxyshot.compat;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.minecraft.client.gui.screens.Screen;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Method;
-
+/**
+ * Entry point for Minecraft APIs that differ between supported versions.
+ * The actual implementation is {@link McCompat}, which is compiled from src/mc/&lt;minecraft_version&gt;/java,
+ * so each release jar is built against exactly one Minecraft version.
+ */
 public final class VersionCompat {
-    private static final Logger LOGGER = LoggerFactory.getLogger("VoxyShot/Compat");
-    private static final MethodHandle GET_MAIN_RENDER_TARGET;
+    private VersionCompat() {
+    }
 
-    static {
-        MethodHandle mh = null;
-        MethodHandles.Lookup lookup = MethodHandles.publicLookup();
+    public static Screen getScreen(Minecraft mc) {
+        return McCompat.getScreen(mc);
+    }
 
-        // 1. Try Minecraft#getMainRenderTarget() (Minecraft 26.1.x and earlier)
-        try {
-            Method m = Minecraft.class.getMethod("getMainRenderTarget");
-            mh = lookup.unreflect(m);
-            LOGGER.info("Using Minecraft#getMainRenderTarget() for RenderTarget access");
-        } catch (Throwable ignored) {
-        }
+    public static void setScreen(Minecraft mc, Screen screen) {
+        McCompat.setScreen(mc, screen);
+    }
 
-        // 2. Try GameRenderer#mainRenderTarget() (Minecraft 26.2+)
-        if (mh == null) {
-            try {
-                Method m = GameRenderer.class.getMethod("mainRenderTarget");
-                MethodHandle gameRendererMh = lookup.unreflect(m);
-                // Bind to extract from Minecraft -> GameRenderer
-                mh = MethodHandles.filterReturnValue(
-                        lookup.findGetter(Minecraft.class, "gameRenderer", GameRenderer.class),
-                        gameRendererMh
-                );
-                LOGGER.info("Using GameRenderer#mainRenderTarget() for RenderTarget access");
-            } catch (Exception e) {
-                LOGGER.warn("Failed to locate mainRenderTarget method via public lookup, trying reflection fallback", e);
-            }
-        }
+    public static boolean isHudHidden(Minecraft mc) {
+        return McCompat.isHudHidden(mc);
+    }
 
-        // 3. Fallback search on GameRenderer methods returning RenderTarget
-        if (mh == null) {
-            for (Method m : GameRenderer.class.getMethods()) {
-                if (RenderTarget.class.isAssignableFrom(m.getReturnType()) && m.getParameterCount() == 0) {
-                    try {
-                        m.setAccessible(true);
-                        MethodHandle fallbackMh = MethodHandles.lookup().unreflect(m);
-                        mh = MethodHandles.filterReturnValue(
-                                MethodHandles.lookup().findGetter(Minecraft.class, "gameRenderer", GameRenderer.class),
-                                fallbackMh
-                        );
-                        LOGGER.info("Using fallback GameRenderer#{}() for RenderTarget access", m.getName());
-                        break;
-                    } catch (Exception ignored) {
-                    }
-                }
-            }
-        }
-
-        GET_MAIN_RENDER_TARGET = mh;
+    public static void setHudHidden(Minecraft mc, boolean hidden) {
+        McCompat.setHudHidden(mc, hidden);
     }
 
     public static RenderTarget getMainRenderTarget(Minecraft mc) {
-        if (GET_MAIN_RENDER_TARGET != null) {
-            try {
-                return (RenderTarget) GET_MAIN_RENDER_TARGET.invokeExact(mc);
-            } catch (Throwable t) {
-                LOGGER.error("Failed to invoke getMainRenderTarget", t);
-            }
-        }
-        // Direct fallback: check field if possible
-        try {
-            var field = Minecraft.class.getDeclaredField("mainRenderTarget");
-            field.setAccessible(true);
-            return (RenderTarget) field.get(mc);
-        } catch (Throwable ignored) {
-        }
-        throw new IllegalStateException("Could not resolve Minecraft main RenderTarget!");
+        return McCompat.getMainRenderTarget(mc);
     }
 }
+

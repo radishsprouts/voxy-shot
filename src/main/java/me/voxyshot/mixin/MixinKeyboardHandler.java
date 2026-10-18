@@ -1,6 +1,8 @@
 package me.voxyshot.mixin;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import me.voxyshot.VoxyShotClient;
+import me.voxyshot.compat.VersionCompat;
 import me.voxyshot.config.VoxyShotConfigScreen;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
@@ -8,7 +10,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.controls.KeyBindsScreen;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,8 +25,8 @@ public class MixinKeyboardHandler {
 
     @Inject(method = "keyPress", at = @At("HEAD"))
     private void voxyshot$onKeyPress(long window, int action, KeyEvent event, CallbackInfo ci) {
-        if (action == GLFW.GLFW_PRESS && window == this.minecraft.getWindow().handle()) {
-            Screen screen = this.minecraft.screen;
+        if (action == InputConstants.PRESS && window == this.minecraft.getWindow().handle()) {
+            Screen screen = VersionCompat.getScreen(this.minecraft);
             // Do not steal the key while the user is rebinding a key in the Key Binds screen
             if (screen instanceof KeyBindsScreen keyBindsScreen && keyBindsScreen.selectedKey != null) {
                 return;
@@ -36,8 +37,8 @@ public class MixinKeyboardHandler {
             }
             if (VoxyShotClient.KEY_CONFIG.matches(event)) {
                 // If config screen is already open, do not open duplicate
-                if (!(this.minecraft.screen instanceof VoxyShotConfigScreen)) {
-                    this.minecraft.setScreen(new VoxyShotConfigScreen(this.minecraft.screen));
+                if (!(screen instanceof VoxyShotConfigScreen)) {
+                    VersionCompat.setScreen(this.minecraft, new VoxyShotConfigScreen(screen));
                 }
             }
         }

@@ -9,8 +9,25 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  build:
+    name: Build (MC ${{ matrix.minecraft_version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - minecraft_version: '26.1.2'
+            minecraft_dependency: '>=26.1.2 <26.2'
+            fabric_api_version: '0.155.3+26.1.2'
+            modmenu_version: '18.0.2'
+          - minecraft_version: '26.2'
+            minecraft_dependency: '>=26.2 <26.3'
+            fabric_api_version: '0.161.0+26.2'
+            modmenu_version: '20.0.3'
+          - minecraft_version: '26.3'
+            minecraft_dependency: '>=26.3 <26.4'
+            fabric_api_version: '0.163.0+26.3'
+            modmenu_version: '21.0.0'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,14 +41,33 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Resolve version from tag
-        id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
-
       - name: Build
         run: |
           chmod +x ./gradlew
-          ./gradlew build -Pmod_version=${{ steps.version.outputs.version }} --no-daemon
+          ./gradlew build --no-daemon \
+            -Pmod_version="${GITHUB_REF_NAME#v}" \
+            -Pminecraft_version="${{ matrix.minecraft_version }}" \
+            -Pminecraft_dependency="${{ matrix.minecraft_dependency }}" \
+            -Pfabric_api_version="${{ matrix.fabric_api_version }}" \
+            -Pmodmenu_version="${{ matrix.modmenu_version }}"
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-${{ matrix.minecraft_version }}
+          path: build/libs/*.jar
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download jars
+        uses: actions/download-artifact@v4
+        with:
+          pattern: jar-*
+          path: dist
+          merge-multiple: true
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
@@ -43,4 +79,4 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
-            build/libs/*.jar
+            dist/*.jar

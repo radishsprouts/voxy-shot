@@ -2,14 +2,16 @@ package me.voxyshot;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import me.voxyshot.capture.ScreenshotTaskController;
+import me.voxyshot.compat.McCompat;
+import me.voxyshot.compat.VersionCompat;
 import me.voxyshot.config.VoxyShotConfig;
 import me.voxyshot.config.VoxyShotConfigScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,17 +24,18 @@ public class VoxyShotClient implements ClientModInitializer {
             Identifier.fromNamespaceAndPath(MOD_ID, "main")
     );
 
+    // InputConstants.KEY_* resolve to the correct key codes for each Minecraft version (GLFW up to 26.2, SDL from 26.3)
     public static final KeyMapping KEY_CAPTURE = new KeyMapping(
             "key.voxyshot.capture",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_F9,
+            McCompat.KEYBOARD_TYPE,
+            InputConstants.KEY_F9,
             KEY_CATEGORY
     );
 
     public static final KeyMapping KEY_CONFIG = new KeyMapping(
             "key.voxyshot.config",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_F10,
+            McCompat.KEYBOARD_TYPE,
+            InputConstants.KEY_F10,
             KEY_CATEGORY
     );
 
@@ -54,8 +57,9 @@ public class VoxyShotClient implements ClientModInitializer {
         }
         while (KEY_CONFIG.consumeClick()) {
             // MixinKeyboardHandler may already have opened the screen for this key press
-            if (!(mc.screen instanceof VoxyShotConfigScreen)) {
-                mc.setScreen(new VoxyShotConfigScreen(mc.screen));
+            Screen current = VersionCompat.getScreen(mc);
+            if (!(current instanceof VoxyShotConfigScreen)) {
+                VersionCompat.setScreen(mc, new VoxyShotConfigScreen(current));
             }
         }
     }

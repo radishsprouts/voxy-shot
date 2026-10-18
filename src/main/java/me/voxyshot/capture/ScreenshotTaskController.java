@@ -62,7 +62,7 @@ public class ScreenshotTaskController {
 
         this.originalWidth = window.getWidth();
         this.originalHeight = window.getHeight();
-        this.originalHideGui = mc.options.hideGui;
+        this.originalHideGui = VersionCompat.isHudHidden(mc);
 
         this.consecutiveIdleFrames = 0;
         this.totalWaitFrames = 0;
@@ -94,7 +94,7 @@ public class ScreenshotTaskController {
             try {
                 // Apply HUD visibility option
                 if (VoxyShotConfig.INSTANCE.hideHudDuringCapture) {
-                    mc.options.hideGui = true;
+                    VersionCompat.setHudHidden(mc, true);
                 }
 
                 // Prepare Voxy (LOD boost + FREX)
@@ -231,7 +231,7 @@ public class ScreenshotTaskController {
     private void restoreAll(Window window, Minecraft mc) {
         try {
             VoxyCompat.restoreAfterCapture();
-            mc.options.hideGui = originalHideGui;
+            VersionCompat.setHudHidden(mc, originalHideGui);
             resizeAll(window, mc, originalWidth, originalHeight);
             LOGGER.info("Restored window and Voxy settings after capture.");
         } catch (Throwable t) {

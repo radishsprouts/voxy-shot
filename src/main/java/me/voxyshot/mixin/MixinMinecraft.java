@@ -22,7 +22,9 @@ public class MixinMinecraft {
             method = "renderFrame",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V",
+                    // No descriptor: the signature differs between versions
+                    // (26.1.2/26.2: render(DeltaTracker, boolean), 26.3: render())
+                    target = "Lnet/minecraft/client/renderer/GameRenderer;render",
                     shift = At.Shift.AFTER
             )
     )

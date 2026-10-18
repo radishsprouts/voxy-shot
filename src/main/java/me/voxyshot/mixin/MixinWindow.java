@@ -10,8 +10,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Window.class)
 public class MixinWindow {
 
+    // Target arguments are omitted on purpose: the signature differs between versions
+    // (26.1.2/26.2: (long, int, int), 26.3: (int, int))
     @Inject(method = "onFramebufferResize", at = @At("HEAD"), cancellable = true)
-    private void voxyshot$protectCaptureResolution(long handle, int width, int height, CallbackInfo ci) {
+    private void voxyshot$protectCaptureResolution(CallbackInfo ci) {
         if (ScreenshotTaskController.INSTANCE.isCapturing()) {
             ci.cancel();
         }
