@@ -1,0 +1,21 @@
+{
+  "key.category.voxyshot": "VoxyShot",
+  "key.voxyshot.capture": "Take High-Res Screenshot",
+  "key.voxyshot.config": "Open VoxyShot Config",
+
+  "voxyshot.config.title": "VoxyShot Configuration",
+  "voxyshot.config.resolution": "Resolution Preset",
+  "voxyshot.config.custom_width": "Custom Width",
+  "voxyshot.config.custom_height": "Custom Height",
+  "voxyshot.config.override_f2": "Override Vanilla F2",
+  "voxyshot.config.voxy_lod_boost": "Voxy LOD Quality Boost",
+  "voxyshot.config.hide_hud": "Hide HUD in Screenshot",
+  "voxyshot.config.max_wait_seconds": "Max LOD Wait Time (sec)",
+  "voxyshot.config.done": "Done",
+
+  "voxyshot.capture.capturing": "Capturing %sx%s screenshot with Voxy LOD...",
+  "voxyshot.capture.waiting_lod": "Streaming Voxy LODs... (Frame: %s, Ingest: %s)",
+  "voxyshot.capture.success": "Saved high-res screenshot as %s (%sx%s)",
+  "voxyshot.capture.failed": "Failed to take high-res screenshot: %s",
+  "voxyshot.capture.timeout": "Voxy LODs did not finish loading within %s s; distant terrain may be lower quality (increase Max LOD Wait Time)"
+}

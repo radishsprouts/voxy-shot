@@ -1,0 +1,27 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# Eclipse / VS Code Java output
+bin/
+.classpath
+.project
+.settings/
+
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Minecraft run directory
+run/
+
+# Local tooling
+.vscode/
+tmp/
+
+# OS
+.DS_Store
+Thumbs.db

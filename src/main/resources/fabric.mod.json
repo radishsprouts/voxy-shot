@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "voxyshot",
+  "version": "${version}",
+  "name": "VoxyShot",
+  "description": "High-resolution screenshot mod with flawless Voxy LOD rendering support.",
+  "authors": [
+    "VoxyShot Team"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "me.voxyshot.VoxyShotClient"
+    ],
+    "modmenu": [
+      "me.voxyshot.config.ModMenuIntegration"
+    ],
+    "frex_flawless_frames": [
+      "me.voxyshot.compat.VoxyShotFrexConsumer"
+    ]
+  },
+  "mixins": [
+    "voxyshot.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": ">=26.1.2 <=26.3",
+    "java": ">=25"
+  },
+  "suggests": {
+    "voxy": "*"
+  }
+}

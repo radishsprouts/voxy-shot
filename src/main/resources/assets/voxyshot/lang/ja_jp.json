@@ -1,0 +1,21 @@
+{
+  "key.category.voxyshot": "VoxyShot",
+  "key.voxyshot.capture": "高解像度スクリーンショット撮影",
+  "key.voxyshot.config": "VoxyShot 設定画面を開く",
+
+  "voxyshot.config.title": "VoxyShot 設定",
+  "voxyshot.config.resolution": "解像度プリセット",
+  "voxyshot.config.custom_width": "カスタム横幅 (px)",
+  "voxyshot.config.custom_height": "カスタム縦幅 (px)",
+  "voxyshot.config.override_f2": "通常のF2キーを高解像度化",
+  "voxyshot.config.voxy_lod_boost": "Voxy LOD品質ブースト",
+  "voxyshot.config.hide_hud": "撮影時にHUD（照準・手）を非表示",
+  "voxyshot.config.max_wait_seconds": "LOD読み込み最大待機時間 (秒)",
+  "voxyshot.config.done": "完了",
+
+  "voxyshot.capture.capturing": "%sx%s の高解像度スクリーンショットを撮影中（Voxy LOD待機中）...",
+  "voxyshot.capture.waiting_lod": "Voxy LOD読み込み中... (待機フレーム: %s)",
+  "voxyshot.capture.success": "高解像度スクリーンショットを保存しました: %s (%sx%s)",
+  "voxyshot.capture.failed": "高解像度スクリーンショットの撮影に失敗しました: %s",
+  "voxyshot.capture.timeout": "Voxy LODの読み込みが%s秒以内に完了しませんでした。遠景の品質が低い可能性があります（設定で最大待機時間を延ばしてください）"
+}

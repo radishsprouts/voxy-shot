@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.voxyshot.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "MixinMinecraft",
+    "MixinScreenshot",
+    "MixinWindow",
+    "MixinKeyboardHandler",
+    "MixinOptions"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
